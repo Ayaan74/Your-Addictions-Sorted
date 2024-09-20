@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Addictions Sorted</title>
+    <style>
+        /* General styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: url('https://www.w3schools.com/w3images/forestbridge.jpg');
+            background-size: cover;
+            color: white;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-top: 20px;
+        }
+
+        h2 {
+            color: #FFD700;
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px auto;
+            width: 60%;
+        }
+
+        input, select, button {
+            padding: 10px;
+            margin: 10px 0;
+            width: 80%;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #FFD700;
+            color: black;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #FF8C00;
+        }
+
+        #reward-system {
+            margin-top: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        /* Styling for lists */
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            padding: 5px 0;
+        }
+
+        /* Footer styling */
+        footer {
+            margin-top: 40px;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        #chatbot {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px auto;
+            width: 60%;
+            display: none;
+        }
+
+        #chatbot p {
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Your Addictions Sorted</h1>
+
+    <!-- About Us Section -->
+    <div class="container" id="about-us">
+        <h2>About Us</h2>
+        <p>We provide support to help you overcome addictions like smoking and drinking. Our platform connects you with a group of people who share the same goals and provides access to therapists and counselors.</p>
+
+        <h3>Our Services & Pricing</h3>
+        <p>Choose the right support for you:</p>
+        <ul>
+            <li>Therapist Session: 150 AED per session</li>
+            <li>Counselor Session: 150 AED per session</li>
+            <li>Group Session: 35 AED per session</li>
+        </ul>
+
+        <h3>Reward System</h3>
+        <p>Every day you will be asked if you smoked. If you say no, you'll earn points. At the end of each month, you can redeem these points for vouchers!</p>
+    </div>
+
+    <!-- Signup Section -->
+    <div class="container" id="signup-section">
+        <h2>Sign Up</h2>
+        <form id="signup-form">
+            <label for="username">Username:</label><br>
+            <input type="text" id="username" name="username" required><br>
+
+            <label for="email">Email:</label><br>
+            <input type="email" id="email" name="email" required><br>
+
+            <label for="password">Password:</label><br>
+            <input type="password" id="password" name="password" required><br>
+
+            <label for="addiction">Choose Addiction:</label><br>
+            <select id="addiction" name="addiction">
+                <option value="smoking">Smoking</option>
+                <option value="drinking">Drinking</option>
+            </select><br>
+
+            <button type="submit">Sign Up</button>
+        </form>
+    </div>
+
+    <!-- Login Section -->
+    <div class="container" id="login-section">
+        <h2>Login</h2>
+        <form id="login-form">
+            <label for="login-email">Email:</label><br>
+            <input type="email" id="login-email" name="login-email" required><br>
+
+            <label for="login-password">Password:</label><br>
+            <input type="password" id="login-password" name="login-password" required><br>
+
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <!-- Chatbot Section -->
+    <div id="chatbot">
+        <h2>Payment Information</h2>
+        <p>How would you like to pay?</p>
+        <button onclick="handlePayment('therapist')">Therapist</button>
+        <button onclick="handlePayment('counselor')">Counselor</button>
+        <button onclick="handlePayment('group')">Group Meeting</button>
+
+        <div id="payment-options" style="display:none;">
+            <h3>Select Your Option</h3>
+            <div id="therapist-options" style="display:none;">
+                <label for="therapist">Choose Therapist:</label><br>
+                <select id="therapist" name="therapist">
+                    <option value="therapist1">Dr. John Smith</option>
+                    <option value="therapist2">Dr. Emily Davis</option>
+                </select><br>
+            </div>
+            <div id="counselor-options" style="display:none;">
+                <label for="counselor">Choose Counselor:</label><br>
+                <select id="counselor" name="counselor">
+                    <option value="counselor1">Alex Johnson</option>
+                    <option value="counselor2">Patricia Brown</option>
+                </select><br>
+            </div>
+            <button onclick="confirmPayment()">Confirm Payment</button>
+        </div>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div class="container" id="dashboard" style="display:none;">
+        <h2>Dashboard</h2>
+        <p id="welcome-message"></p>
+
+        <p>Your addiction group includes:</p>
+        <ul id="user-list"></ul>
+
+        <!-- Reward System -->
+        <div id="reward-system">
+            <h3>Daily Check-in</h3>
+            <p>Did you smoke today?</p>
+            <button onclick="handleReward('yes')">Yes</button>
+            <button onclick="handleReward('no')">No</button>
+
+            <p>You have <span id="points">0</span> points.</p>
+        </div>
+    </div>
+
+    <script>
+        // Store users and points in localStorage
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+        let points = JSON.parse(localStorage.getItem('points')) || 0;
+        let paymentConfirmed = JSON.parse(localStorage.getItem('paymentConfirmed')) || false;
+        let lastRewardTime = JSON.parse(localStorage.getItem('lastRewardTime')) || 0;
+
+        document.getElementById('points').innerText = points;
+
+        // Handle Signup
+        document.getElementById('signup-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const addiction = document.getElementById('addiction').value;
+
+            const newUser = { username, email, password, addiction };
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+
+            alert('Signup successful! Please log in.');
+        });
+
+        // Handle Login
+        document.getElementById('login-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const loginEmail = document.getElementById('login-email').value;
+            const loginPassword = document.getElementById('login-password').value;
+
+            const user = users.find(user => user.email === loginEmail && user.password === loginPassword);
+
+            if (user) {
+                document.getElementById('signup-section').style.display = 'none';
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                document.getElementById('chatbot').style.display = 'block';
+
+                document.getElementById('welcome-message').textContent = `Welcome, ${user.username}!`;
+                document.getElementById('user-list').innerHTML = `
+                    <li>Username: ${user.username}</li>
+                    <li>Addiction: ${user.addiction}</li>
+                `;
+            } else {
+                alert('Invalid email or password.');
+            }
+        });
+
+        // Handle Payment
+        function handlePayment(type) {
+            document.getElementById('payment-options').style.display = 'block';
+
+            if (type === 'therapist') {
+                document.getElementById('therapist-options').style.display = 'block';
+                document.getElementById('counselor-options').style.display = 'none';
+            } else if (type === 'counselor') {
+                document.getElementById('therapist-options').style.display = 'none';
+                document.getElementById('counselor-options').style.display = 'block';
+            } else if (type === 'group') {
+                document.getElementById('therapist-options').style.display = 'none';
+                document.getElementById('counselor-options').style.display = 'none';
+                alert('Please confirm your group meeting payment.');
+            }
+        }
+
+        function confirmPayment() {
+            alert('Payment confirmed! You are now booked for a session.');
+            localStorage.setItem('paymentConfirmed', true);
+            document.getElementById('payment-options').style.display = 'none';
+        }
+
+        // Handle Reward System
+        function handleReward(answer) {
+            const currentTime = new Date().getTime();
+
+            // Allow reward system only once every 24 hours
+            if (currentTime - lastRewardTime < 86400000) {
+                alert('You can only check in once every 24 hours.');
+                return;
+            }
+
+            if (answer === 'no') {
+                points += 10;
+                alert('Great job! You earned 10 points.');
+            } else {
+                alert('Keep trying! You can do it.');
+            }
+
+            document.getElementById('points').innerText = points;
+            localStorage.setItem('points', JSON.stringify(points));
+            localStorage.setItem('lastRewardTime', JSON.stringify(currentTime));
+        }
+    </script>
+
+</body>
+</html>
+
